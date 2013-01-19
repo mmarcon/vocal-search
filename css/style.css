@@ -1,0 +1,61 @@
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+.map {
+    width: 100%;
+    height: 100%;
+}
+
+.log {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: rgba(0,0,0,0.7);
+    padding: 10px 45px 10px 10px;
+}
+
+.log p {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    font-size: 24px;
+    margin: 10px;
+    float: left;
+}
+
+.speak {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 40px;
+    height: 40px;
+    background: transparent url(../images/micro.png) no-repeat 50% 50%;
+    border: 0;
+    color: transparent;
+    cursor: pointer;
+}
+
+.speak.recording {
+    background: transparent url(../images/micro-recoerding.png) no-repeat 50% 50%;
+}
+
+/*Custom map UI*/
+.nm_bubble_bg.nm_contentBG {
+    background: #000F1A;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid #000F1A;
+}
+.nm_bubble_content {
+    font-family: 'Raleway', serif !important;
+    text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.3);
+    font-size: 1rem !important;
+    padding: 10px 20px !important;
+}
+
+.nm_bubble_controls a {
+    /*color: #000F1A !important;*/
+}
