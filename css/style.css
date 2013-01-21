@@ -29,7 +29,7 @@ html, body {
 .speak {
     position: absolute;
     right: 5px;
-    top: 5px;
+    top: 8px;
     width: 40px;
     height: 40px;
     background: transparent url(../images/micro.png) no-repeat 50% 50%;
@@ -40,6 +40,28 @@ html, body {
 
 .speak.recording {
     background: transparent url(../images/micro-recoerding.png) no-repeat 50% 50%;
+}
+
+.searchbox {
+    position: absolute;
+    width: 400px;
+    left: 50%;
+    margin-left: -222px;
+    border-radius: 4px;
+    background: #efefef;
+    border: 5px solid rgba(0,0,0,0.2);
+    top: 60px;
+    padding-right: 45px;
+}
+
+.searchbox input[type=text] {
+    display: block;
+    margin: 10px auto;
+    width: 370px;
+    font-size: 24px;
+    padding: 5px;
+    border: 0;
+    border-radius: 3px;
 }
 
 /*Custom map UI*/

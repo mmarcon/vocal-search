@@ -110,6 +110,7 @@ function fireSearch(term, color) {
                 });
             });
         }
+        $('.searchbox input').val('');
     });
 }
 
@@ -141,6 +142,7 @@ function bind(){
         $('.log div').append('<p style="color:' + color + '">' + APP.transcript + '</p>');
         APP.commandParser.transcript = APP.transcript;
         var result = APP.commandParser.parse();
+        $('.searchbox input').val(result.target);
         console.log(result);
         fireSearch(result.target, color);
     };
@@ -166,6 +168,22 @@ function bind(){
             capture();
         }
     });
+    $('.searchbox input').on('keypress', function(e){
+        e.stopPropagation();
+        var term, color;
+        if(event.which === 13) {
+            term = $(this).val();
+            color = [(Math.random() * 255).toFixed(0), (Math.random() * 255).toFixed(0), (Math.random() * 255).toFixed(0)];
+            color = 'rgb(' + color.join(',') + ');';
+            $('.log div').append('<p style="color:' + color + '">' + term + '</p>');
+            fireSearch(term, color);
+        }
+    });
+    $('form').on('submit', function(e){
+        e.preventDefault();
+    });
+
+    $('.searchbox input').focus();
 }
 
 $(window).on('load', function(){
