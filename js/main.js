@@ -1,54 +1,36 @@
 var APP = {};
 
 APP.config = {
-    places: 'http://places.nlp.nokia.com/places/v1/discover/search?at={LAT}%2C{LON}&q={TERM}&tf=plain&pretty=y&size=10&app_id=SkOMYikReO0lC0n04Iqy&app_code=cilFu9ObuYee4J7ZbaFHAA%3D%3D'
+    places: 'http://places.nlp.nokia.com/places/v1/discover/search?at={LAT}%2C{LON}&q={TERM}&tf=plain&pretty=y&size=10&app_id=SkOMYikReO0lC0n04Iqy&app_code=cilFu9ObuYee4J7ZbaFHAA%3D%3D',
+    maluubaAPIKey: 'mj2ZIbFHSEhHqKs04mpbgKC2dXKvR6JF'
 };
 
 APP.supportedCommands = {
     SEARCH: 0
 };
 
-APP.SimpleCommandParser = function(){
-    this.ruleset = [];
+APP.MaluubaParser = function(apikey){
+    this._ep_interpret = 'http://www.corsproxy.com/napi.maluuba.com/v0/interpret';
+    this.apikey = apikey;
 };
 
-APP.SimpleCommandParser.prototype.parse = function(){
-    var result = {};
-    this.ruleset.forEach(function(fn){
-        result = $.extend(true, {}, result, fn(APP.transcript, result));
-    });
-    return result;
-};
-
-APP.SimpleCommandParser.prototype.addRule = function(fn){
-    this.ruleset.push(fn);
-};
-
-APP.commandParser = new APP.SimpleCommandParser();
-APP.commandParser.addRule(function(transcript, result){
-    var m = transcript.match(/(?:find|search\s+for|look\s+for)\s+(.+)/i);
-    if(m) {
-        result.command = APP.supportedCommands.SEARCH;
-        result.searchMatchArray = m;
-        result.target = m[1];
-    }
-    return result;
-});
-
-APP.commandParser.addRule(function(transcript, result){
-    if(!result.target) {
-        return result;
-    }
-    var articles = ['a', 'an', 'the'], target = result.target, notArticles = [];
-    target = target.split(' ');
-    target.forEach(function(w){
-        if(!~articles.indexOf(w)) {
-            notArticles.push(w);
+APP.MaluubaParser.prototype.interpret = function(transcript, callback){
+    $.ajax({
+        url: this._ep_interpret,
+        data: {
+            apikey: this.apikey,
+            phrase: transcript
         }
+    }).done(function(data){
+        if(data.action === 'BUSINESS_SEARCH') {
+            callback(data.entities && data.entities.searchTerm);
+        } else {
+            callback([]);
+        }
+    }).fail(function(){
+        callback(null);
     });
-    result.target = notArticles.join(' ');
-    return result;
-});
+};
 
 function checkCompatibility() {
     APP.compatibility = {};
@@ -140,11 +122,16 @@ function bind(){
         var color = [(Math.random() * 255).toFixed(0), (Math.random() * 255).toFixed(0), (Math.random() * 255).toFixed(0)];
         color = 'rgb(' + color.join(',') + ');';
         $('.log div').append('<p style="color:' + color + '">' + APP.transcript + '</p>');
-        APP.commandParser.transcript = APP.transcript;
-        var result = APP.commandParser.parse();
-        $('.searchbox input').val(result.target);
-        console.log(result);
-        fireSearch(result.target, color);
+
+        APP.commandParser.interpret(APP.transcript, function(terms){
+            if(terms === null) {
+                //Then there was an error
+                alert('Something went wrong with the Webspeech API or with the interpretation API. Please try again.');
+                return;
+            }
+            $('.searchbox input').val(terms.join(' '));
+            fireSearch(terms.join(' '), color);
+        });
     };
 
     APP.recognition.onresult = function(event){
@@ -188,6 +175,7 @@ function bind(){
 
 $(window).on('load', function(){
     checkCompatibility();
+    APP.commandParser = new APP.MaluubaParser(APP.config.maluubaAPIKey);
     APP.map = $('.map');
 
     if (navigator.geolocation) {
