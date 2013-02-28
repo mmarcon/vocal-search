@@ -10,7 +10,7 @@ APP.supportedCommands = {
 };
 
 APP.MaluubaParser = function(apikey){
-    this._ep_interpret = 'http://www.corsproxy.com/napi.maluuba.com/v0/interpret';
+    this._ep_interpret = 'http://napi.maluuba.com/v0/interpret';
     this.apikey = apikey;
 };
 
